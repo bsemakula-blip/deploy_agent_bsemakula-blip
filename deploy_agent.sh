@@ -171,8 +171,29 @@ run_app() {
     ( cd "$dir" && python3 attendance_checker.py )
 }
 
+#Archive the log files
 archive_log() {
-    
+     read -p "Enter the project name to archive: " name
+    dir="attendance_tracker_$name"
+
+    if [ ! -d "$dir" ]; then
+        echo "Error: $dir does not exist."
+        return 1
+    fi
+
+    # Same timestamp for both logs from this run
+    ts=$(date +%Y%m%d_%H%M%S)
+
+    # Do the same for attendance.log and absent.log
+    for log in attendance absent; do
+        if [ -f "$dir/reports/$log.log" ]; then
+            mkdir -p "$dir/archives/$log"
+            mv "$dir/reports/$log.log" "$dir/archives/$log/${log}_$ts.log"
+            echo "Archived: $dir/archives/$log/${log}_$ts.log"
+        else
+            echo "No $log.log found, skipping."
+        fi
+    done
 }
 
 #Main Menu
