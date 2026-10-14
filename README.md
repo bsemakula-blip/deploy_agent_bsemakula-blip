@@ -124,3 +124,5 @@ Archive:  attendance_tracker_test_archive.zip
 - **Archiving:** ran after a marking session with and without absences to check the skip message.
 - **Interrupts:** Ctrl+C and Ctrl+Z mid-deploy, checking the zip and that the folder was removed.
 
+## Video folder
+https://drive.google.com/drive/folders/1jnc-PLy_eFNM-BMwEwkZKqihBm4OA3zo?usp=sharing
