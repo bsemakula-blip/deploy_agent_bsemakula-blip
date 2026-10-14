@@ -20,3 +20,15 @@ before it finishes. The script zips what exists so far into
 attendance_tracker_<name>_archive.zip, deletes the incomplete folder, and exits.
 Check with `ls` and `unzip -l attendance_tracker_<name>_archive.zip`.
 The zip contains whatever had been created when the interrupt happened.
+
+ unzip -l attendance_tracker_test_archive.zip
+Archive:  attendance_tracker_test_archive.zip
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  2026-10-14 22:56   attendance_tracker_test/
+        0  2026-10-14 22:56   attendance_tracker_test/Helpers/
+      123  2026-10-14 22:56   attendance_tracker_test/Helpers/config.json
+     8147  2026-10-14 22:56   attendance_tracker_test/attendance_checker.py
+        0  2026-10-14 22:56   attendance_tracker_test/reports/
+---------                     -------
+     8270                     5 files
