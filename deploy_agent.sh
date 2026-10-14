@@ -111,6 +111,13 @@ deploy() {
 
 build_roster || return 1
 
+#Necessary permisions given and checked
+chmod +x "$projdir/attendance_checker.py"
+chmod 600 "$projdir/Helpers/config.json"
+ls -l "$projdir/attendance_checker.py"
+ls -l "$projdir/Helpers/config.json"
+
+
 echo "Folder structure created in $projdir"
 
 }
