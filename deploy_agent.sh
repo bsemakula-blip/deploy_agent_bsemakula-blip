@@ -98,6 +98,26 @@ update_thresholds() {
     echo "Thresholds updated: warning $warn, failure $fail"
 }
 
+# Runs when Ctrl+C or Ctrl+Z is pressed during deployment
+handle_interrupt() {
+    echo ""
+    echo "Deployment interrupted. Archiving what was done already."
+
+    # Stop trapping so this only runs once
+    trap - SIGINT SIGTSTP
+
+    # Zip the partial project then remove it
+    if [ -d "$projdir" ]; then
+        zip -rq "${projdir}_archive.zip" "$projdir"
+        echo "Created ${projdir}_archive.zip"
+        rm -rf "$projdir"
+        echo "Removed the incomplete $projdir"
+    fi
+
+    echo "Session ended."
+    exit 1
+}
+
 # Deploys the project
 deploy() {
 
@@ -119,6 +139,10 @@ deploy() {
 	        return 1
 	    fi
     fi
+
+    # Catch Ctrl+C and Ctrl+Z from here until setup is done
+trap handle_interrupt SIGINT SIGTSTP
+
 #Make the directory
 
     mkdir -p "$projdir/Helpers" "$projdir/reports" || {
@@ -147,6 +171,12 @@ chmod 600 "$projdir/Helpers/config.json"
 ls -l "$projdir/attendance_checker.py"
 ls -l "$projdir/Helpers/config.json"
 
+ update_thresholds
+
+#Setup is done stop catching the signals
+    trap - SIGINT SIGTSTP
+    echo "Verifying deployment by running the app..."
+    run_app "$projdir"
 
 echo "Folder structure created in $projdir"
 
