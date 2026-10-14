@@ -21,7 +21,54 @@ check_prereq() {
     python3 --version
 }
 
-# Feature to be implemented
+#Number of students to be in the table
+getcount() {
+	read -p "How many students? (1-$1): " count
+	if ! [[ "$count" =~ ^[0-9]+$ ]] || [ "$count" -lt 1 ] || [ "$count" -gt "$1" ]; then
+		echo "Error: enter a whole number from 1 to $1"
+		return 1
+	fi
+	}
+
+# Roster with random names and detials
+build_roster() {
+echo "Roster options:"
+echo " A) Copy from template (4 prior sessions each)"
+echo " B) Generate a fresh roster (counts start at 0)"
+read -p "Choose A or B: " opt
+
+case "$opt" in
+	[Aa])
+		getcount 10 || return 1
+		head -n $((count + 1)) templates/assets.csv > "$projdir/Helpers/assets.csv" || {
+			echo "Error, could not copy roster."
+		return 1
+}
+;;
+[Bb])
+	getcount 10 || return 1
+	names=("Ian" "Gold" "Miriam" "Kevine" "Noah" "Zach" "Benji" "Simon" "Tim" "Amanda")
+	emails=("ian@example.com" "gold@example.com" "miriam@example.com" "kevine@example.com" "noah@example.com" "zach@example.com" "benji@example.com" "simon@example.com" "tim@example.com" "amanda@example.com")
+
+echo "Email,Names,Attendance Count,Absence Count" > "$projdir/Helpers/assets.csv"
+            for ((i=0; i<count; i++)); do
+                echo "${emails[$i]},${names[$i]},0,0" >> "$projdir/Helpers/assets.csv"
+            done
+
+            sed -i 's/"total_sessions": [0-9]*/"total_sessions": 1/' "$projdir/Helpers/config.json"
+            ;;
+        *)
+            echo "Invalid option."
+            return 1
+      ;;
+    esac
+
+    echo "Roster created with $count students."
+
+}
+
+
+# Deploys the project
 deploy() {
 
     read -p "Enter the project name: " name
@@ -42,12 +89,14 @@ deploy() {
 	        return 1
 	    fi
     fi
+#Make the directory
 
     mkdir -p "$projdir/Helpers" "$projdir/reports" || {
 	    echo "Error: could not create directories."
             return 1
     }
 
+#Copy the files according to instructions
 
     cp templates/attendance_checker.py "$projdir/" || {
 	    echo "Error: could not copy attendance_checker.py"
@@ -59,6 +108,8 @@ deploy() {
 	    echo "Error: could not copy config.json"
             return 1
     }
+
+build_roster || return 1
 
 echo "Folder structure created in $projdir"
 
@@ -92,3 +143,4 @@ while true; do
         *) echo "Invalid choice. Enter a number from 1 to 4." ;;
     esac
 done
+
