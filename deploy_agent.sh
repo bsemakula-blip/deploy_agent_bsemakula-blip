@@ -67,6 +67,36 @@ echo "Email,Names,Attendance Count,Absence Count" > "$projdir/Helpers/assets.csv
 
 }
 
+# Update the alert thresholds in config.json
+update_thresholds() {
+    read -p "Update the alert thresholds? y/n: " ans
+    if [ "$ans" != "y" ]; then
+        return 0
+    fi
+
+    # Empty input returns to the defaults
+    read -p "Warning threshold (default 75): " warn
+    warn=${warn:-75}
+    read -p "Failure threshold (default 50): " fail
+    fail=${fail:-50}
+
+    # Both must be numbers before sed touches the file
+    if ! [[ "$warn" =~ ^[0-9]+$ ]] || ! [[ "$fail" =~ ^[0-9]+$ ]]; then
+        echo "Thresholds must be numbers. Keeping the current values."
+        return 0
+    fi
+
+    # Failure has to be lower than warning
+    if [ "$fail" -ge "$warn" ]; then
+        echo "Failure must be lower than warning. Keeping the current values."
+        return 0
+    fi
+
+    # Change only the warning and failure lines
+    sed -i "s/\"warning\": [0-9]*/\"warning\": $warn/" "$projdir/Helpers/config.json"
+    sed -i "s/\"failure\": [0-9]*/\"failure\": $fail/" "$projdir/Helpers/config.json"
+    echo "Thresholds updated: warning $warn, failure $fail"
+}
 
 # Deploys the project
 deploy() {
