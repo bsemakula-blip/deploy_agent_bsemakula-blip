@@ -152,12 +152,27 @@ echo "Folder structure created in $projdir"
 
 }
 
+# Run the attendance app on the deployed project
 run_app() {
-    echo "run app"
+      dir="$1"
+
+    # No project passed in, so ask for one (menu option 2)
+    if [ -z "$dir" ]; then
+        read -p "Enter the project name to run: " name
+        dir="attendance_tracker_$name"
+    fi
+
+    if [ ! -d "$dir" ]; then
+        echo "Error: $dir does not exist. Deploy it first."
+        return 1
+    fi
+
+    # Run the cd in a subshell, the script stays where it is
+    ( cd "$dir" && python3 attendance_checker.py )
 }
 
 archive_log() {
-    echo "archive"
+    
 }
 
 #Main Menu
