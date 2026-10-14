@@ -6,7 +6,7 @@ check_prereq() {
 
     for cmd in python3 zip; do
         if command -v "$cmd" >/dev/null 2>&1; then
-            echo "[OK] $cmd found"
+            echo "[OK] $cmd found."
         else
             echo "[ERROR] $cmd is not installed."
             missing=1
@@ -239,7 +239,7 @@ while true; do
     read -p "Choose an option from 1 to 4: " choice
 
     case "$choice" in
-        1) deploy ;;
+        1) deploy ; trap - SIGINT SIGTSTP ;;
         2) run_app ;;
         3) archive_log ;;
         4) echo "Exited."; exit 0 ;;
